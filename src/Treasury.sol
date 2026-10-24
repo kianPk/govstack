@@ -30,4 +30,29 @@ contract Treasury is Ownable {
         IERC20(token).safeTransfer(to, amount);
         emit TokenSpent(token, to, amount);
     }
+
+    /// @notice Execute many ETH transfers in one timelock action.
+    function batchSpendETH(address payable[] calldata tos, uint256[] calldata amounts)
+        external
+        onlyOwner
+    {
+        require(tos.length == amounts.length, "LEN_MISMATCH");
+        for (uint256 i = 0; i < tos.length; i++) {
+            (bool ok,) = tos[i].call{value: amounts[i]}("");
+            require(ok, "ETH_TRANSFER_FAILED");
+            emit EthSpent(tos[i], amounts[i]);
+        }
+    }
+
+    /// @notice Execute many ERC20 transfers in one timelock action.
+    function batchSpendToken(address token, address[] calldata tos, uint256[] calldata amounts)
+        external
+        onlyOwner
+    {
+        require(tos.length == amounts.length, "LEN_MISMATCH");
+        for (uint256 i = 0; i < tos.length; i++) {
+            IERC20(token).safeTransfer(tos[i], amounts[i]);
+            emit TokenSpent(token, tos[i], amounts[i]);
+        }
+    }
 }
