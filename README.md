@@ -2,6 +2,7 @@
 
 **Full DAO stack** — `ERC20Votes` token, OpenZeppelin `Governor`, `TimelockController`, and a timelock-owned `Treasury`. Propose → vote → queue → execute.
 
+[![CI](https://github.com/kianPk/govstack/actions/workflows/ci.yml/badge.svg)](https://github.com/kianPk/govstack/actions/workflows/ci.yml)
 [![Demo](https://img.shields.io/badge/Demo-kianpk.github.io%2Fgovstack-10b981?style=for-the-badge)](https://kianpk.github.io/govstack/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636?style=for-the-badge&logo=solidity)](https://github.com/kianPk/govstack)
 [![Foundry](https://img.shields.io/badge/Foundry-forge-000000?style=for-the-badge)](https://book.getfoundry.sh/)
@@ -37,6 +38,7 @@ forge script script/Deploy.s.sol --rpc-url <RPC> --broadcast
 
 ## Also in this release
 
+- **`Treasury.batchSpend`** — pay multiple ETH recipients in one timelock call (length-checked)
 - `ProposalLib` helpers for ETH/token treasury grants
 - Timestamp clock Governor + Timelock handoff
 

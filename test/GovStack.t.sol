@@ -79,6 +79,37 @@ contract GovStackTest is Test {
         assertEq(uint256(governor.state(proposalId)), uint256(IGovernor.ProposalState.Executed));
     }
 
+    function test_treasuryBatchSpend() public {
+        address payable r1 = payable(makeAddr("r1"));
+        address payable r2 = payable(makeAddr("r2"));
+
+        address payable[] memory recipients = new address payable[](2);
+        recipients[0] = r1;
+        recipients[1] = r2;
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 1 ether;
+        amounts[1] = 2 ether;
+
+        vm.prank(address(timelock));
+        treasury.batchSpend(recipients, amounts);
+
+        assertEq(r1.balance, 1 ether);
+        assertEq(r2.balance, 2 ether);
+        assertEq(address(treasury).balance, 7 ether);
+    }
+
+    function test_batchSpendRevertsOnLengthMismatch() public {
+        address payable[] memory recipients = new address payable[](1);
+        recipients[0] = payable(makeAddr("r1"));
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 1 ether;
+        amounts[1] = 1 ether;
+
+        vm.prank(address(timelock));
+        vm.expectRevert(Treasury.ArrayLengthMismatch.selector);
+        treasury.batchSpend(recipients, amounts);
+    }
+
     function test_quorumRequired() public {
         // alice has 60%, enough alone for quorum (4%) and majority
         assertGe(token.getVotes(alice), token.totalSupply() * 4 / 100);
